@@ -33,7 +33,7 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode(None, "This is a test.")
         self.assertEqual(node.to_html(), "This is a test.")
 
-#these test the ParentNode child class(yes, I'm aware that's a bit counter-intuitive).
+#these test the ParentNode child class
     def test_to_html_with_children(self):
         child_node = LeafNode("span", "child")
         parent_node = ParentNode("div", [child_node])
@@ -46,6 +46,36 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(
             parent_node.to_html(),
             "<div><span><b>grandchild</b></span></div>",)
+        
+    def test_empty_children_list(self):
+        node = ParentNode("div", [])
+        result = node.to_html()
+        self.assertEqual(result, "<div></div>")
+
+    def test_to_html_with_variable_children(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node, LeafNode(None, "child 2"), LeafNode("p", "child 3")])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span>child 2<p>child 3</p></div>",)
+        
+    def test_to_html_no_tag(self):
+        child_node = LeafNode("b", "child 1")
+        node = ParentNode(None, [child_node])
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html_no_child(self):
+        node = ParentNode("div", None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html_invalid_child(self):
+        child_node = LeafNode(None, None)
+        node = ParentNode("div", [child_node])
+        with self.assertRaises(ValueError):
+            node.to_html()
         
     
 
