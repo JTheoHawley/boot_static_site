@@ -16,7 +16,7 @@ class TestTextNode(unittest.TestCase):
 
     def test_noteq(self):
         node = TextNode("This is a text node", TextType.BOLD)
-        node2 = TextNode("This is not not a text node", TextType.NORMAL)
+        node2 = TextNode("This is not not a text node", TextType.TEXT)
         self.assertNotEqual(node, node2)
 
     def test_noteq_url(self):
