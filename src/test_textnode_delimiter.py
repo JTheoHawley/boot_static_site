@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from node_delimiter import split_nodes_delimiter
+from node_delimiter import split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
 class TestTextNode(unittest.TestCase):
@@ -83,6 +83,58 @@ class TestTextNode(unittest.TestCase):
             new_nodes,
         )
 
+#these test split_nodes_image
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+        
+    def test_split_image_single(self):
+        node = TextNode(
+            "![image](https://www.example.COM/IMAGE.PNG)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("image", TextType.IMAGE, "https://www.example.COM/IMAGE.PNG"),
+            ],
+            new_nodes,
+        )
+
+
+#these test split_nodes_link
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with an [test link](https://www.test.com) and another [test link2](https://www.test2.com)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("test link", TextType.LINK, "https://www.test.com"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "test link2", TextType.LINK, "https://www.test2.com"
+                ),
+            ],
+            new_nodes,
+        )
 
 if __name__ == "__main__":
     unittest.main()
