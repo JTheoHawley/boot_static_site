@@ -133,5 +133,41 @@ def fib(n):
         converted = markdown_to_html_node(md_c).to_html()
         self.assertEqual(expected, converted)
 
+    def test_markdown_to_html_node_unordered(self):
+        md_ul = """- Apples
+- _Bananas_
+- **Cherries**"""
+
+        expected = (
+    "<div>"
+    "<ul>"
+    "<li>Apples</li>"
+    "<li><i>Bananas</i></li>"
+    "<li><b>Cherries</b></li>"
+    "</ul>"
+    "</div>"
+)
+        converted = markdown_to_html_node(md_ul).to_html()
+        self.assertEqual(expected, converted)
+
+    def test_markdown_to_html_node_ordered(self):
+        md_ol = """1. First
+2. _Second_
+3. **Third**"""
+
+        expected = (
+    "<div>"
+    "<ol>"
+    "<li>First</li>"
+    "<li><i>Second</i></li>"
+    "<li><b>Third</b></li>"
+    "</ol>"
+    "</div>"
+)
+
+        converted = markdown_to_html_node(md_ol).to_html()
+        self.assertEqual(expected, converted)
+
+
 if __name__ == "__main__":
     unittest.main()

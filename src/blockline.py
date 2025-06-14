@@ -63,6 +63,8 @@ def markdown_to_html_node(markdown):
             html_nodes.append(quote_to_html_node(block))
         if block_type == BlockType.CODE:
             html_nodes.append(code_to_html_node(block))
+        if block_type == BlockType.UNORDERED_LIST or block_type == BlockType.ORDERED_LIST:
+            html_nodes.append(list_to_html_node(block, block_type))
     return ParentNode("div", html_nodes)
 
 
@@ -139,3 +141,19 @@ def code_to_html_node(block_text):
     code_content = "\n".join(code_lines) + "\n"
     code_leaf = LeafNode("code", code_content)
     return ParentNode("pre", [code_leaf])
+
+def list_to_html_node(block_text, block_type):
+    tag = "ul" if block_type == BlockType.UNORDERED_LIST else "ol"
+    lines = block_text.split("\n")
+    children = []
+    for line in lines:
+        if block_type == BlockType.UNORDERED_LIST:
+            line_text = line[2:]
+        else:
+            line_text = line[line.find(" ")+1:]
+        text_nodes = text_to_textnodes(line_text)
+        li_children = []
+        for node in text_nodes:
+            li_children.append(text_node_to_html_node(node))
+        children.append(ParentNode("li", li_children))
+    return ParentNode(tag, children)
