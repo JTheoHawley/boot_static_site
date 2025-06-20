@@ -8,7 +8,7 @@ import shutil
 def main():
     public_set_up()
     copy_static("static", "public")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
     test_node = TextNode("This is a Test", TextType.TEXT)
     print(test_node)
 
@@ -49,4 +49,18 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as d:
         d.write(full_html)
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for item in os.listdir(dir_path_content):
+        content_path = os.path.join(dir_path_content, item)
+        if os.path.isfile(content_path) and item.endswith(".md"):
+            rel_path = os.path.relpath(content_path, dir_path_content)
+            dest_path = os.path.join(dest_dir_path, rel_path)
+            dest_dir = dest_path.replace(".md", ".html")
+            generate_page(content_path, template_path, dest_dir)
+        elif os.path.isdir(content_path):
+            dest_path = os.path.join(dest_dir_path, item)
+            os.mkdir(dest_path)
+            generate_pages_recursive(content_path, template_path, dest_path)
+
+            
 main()
